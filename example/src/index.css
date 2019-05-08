@@ -3,3 +3,12 @@ body {
   padding: 0;
   font-family: sans-serif;
 }
+
+div.container {
+  padding: 12px;
+}
+
+div.content {
+  max-width: 450px;
+  margin: 15px auto;
+}

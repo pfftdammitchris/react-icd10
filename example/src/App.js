@@ -1,13 +1,15 @@
-import React, { Component } from 'react'
+import React from 'react'
+import ReactICD10 from 'react-icd10'
+import './index.css'
 
-import ExampleComponent from 'react-icd10'
-
-export default class App extends Component {
-  render () {
-    return (
-      <div>
-        <ExampleComponent text='Modern React component module' />
+const App = () => {
+  return (
+    <div className="container">
+      <div className="content">
+        <ReactICD10 />
       </div>
-    )
-  }
+    </div>
+  )
 }
+
+export default App

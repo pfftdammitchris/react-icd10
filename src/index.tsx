@@ -1,23 +1,13 @@
-/**
- * @class ExampleComponent
- */
-
 import * as React from 'react'
-
 import styles from './styles.css'
 
-export type Props = { text: string }
-
-export default class ExampleComponent extends React.Component<Props> {
-  render() {
-    const {
-      text
-    } = this.props
-
-    return (
-      <div className={styles.test}>
-        Example Component: {text}
-      </div>
-    )
-  }
+export interface Props {
+  text: string
 }
+
+const ReactICD10 = (props: any) => {
+  console.log(props)
+  return <div className={styles.container}>ICD10</div>
+}
+
+export default ReactICD10

@@ -2,7 +2,7 @@
 
 > Search the International Classification of Diseases table for classifying diagnoses and reasons for visits in health care
 
-[![NPM](https://img.shields.io/npm/v/react-icd10.svg)](https://www.npmjs.com/package/react-icd10) [![JavaScript Style Guide](https://img.shields.io/badge/code_style-standard-brightgreen.svg)](https://standardjs.com)
+[![NPM](https://img.shields.io/npm/v/react-icd10.svg)](https://www.npmjs.com/package/react-icd10) 
 
 ## Install
 
