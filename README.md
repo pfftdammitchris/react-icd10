@@ -1,4 +1,4 @@
-# react-icd10
+# react-icd10 (pending release)
 
 > Search the International Classification of Diseases table for classifying diagnoses and reasons for visits in health care
 
@@ -12,19 +12,7 @@ npm install --save react-icd10
 
 ## Usage
 
-```tsx
-import * as React from 'react'
-
-import MyComponent from 'react-icd10'
-
-class Example extends React.Component {
-  render () {
-    return (
-      <MyComponent />
-    )
-  }
-}
-```
+`noop`
 
 ## License
 
