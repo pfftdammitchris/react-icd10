@@ -4,6 +4,8 @@
 
 [![NPM](https://img.shields.io/npm/v/react-icd10.svg)](https://www.npmjs.com/package/react-icd10)
 
+(This library is in active development)
+
 ## Install
 
 ```bash
