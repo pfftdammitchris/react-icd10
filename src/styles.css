@@ -1,5 +1,22 @@
-div.container {
+.container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: auto;
+  max-width: 450px;
+}
+
+.container input {
   border: 1px solid #1f4a5e;
-  color: #fff;
-  padding: 12;
+  border-radius: 4px;
+  color: #333;
+  padding: 6px 12;
+}
+
+.container button {
+  border: 1px solid #1f4a5e;
+  border-radius: 4px;
+  color: #333;
+  padding: 6px 12;
+  cursor: pointer;
 }

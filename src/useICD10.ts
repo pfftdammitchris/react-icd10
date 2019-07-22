@@ -1,58 +1,41 @@
-import * as React from 'react'
-import axios from 'axios'
-import { CodeDescription } from './typings'
+import { useEffect, useReducer } from 'react'
+import axios from '../node_modules/axios/dist/axios'
+import { Action, ResponseData, State } from './types'
+import { makeFetchICD10Request, parseResponse } from './utils'
 
-const { useState, useEffect, useReducer } = React
-
-const parseResponse = (data: any[]) => {
-  if (data) {
-    const [totalResults, codes, _, codesAndNames] = data
-    return {
-      total: totalResults,
-      results: codesAndNames.reduce(
-        (acc, [code, description]: CodeDescription) => {
-          if (!acc.hasOwnProperty(code)) acc[code] = description
-          return acc
-        },
-        {},
-      ),
-      codes,
-    }
-  }
+const defaultFetchState = {
+  fetching: false,
+  fetched: false,
+  fetchError: null,
 }
 
-// Supports cancelation of the previous onSearch request if a new onSearch is immediately invoked right after
-const icd10Req = (token: string, options: any) => {
-  let call: any
-  return async (keyword: string) => {
-    try {
-      if (call) call.cancel()
-      call = axios.CancelToken.source()
-
-      return axios.get(
-        'https://clinicaltables.nlm.nih.gov/api/icd10cm/v3/search',
-        { cancelToken: call.token },
-      )
-    } catch (error) {
-      throw error
-    }
-  }
-}
-
-const initialState = {
+const defaultDataState = {
   codes: [],
   results: {},
   total: 0,
 }
 
-const reducer = (state, action) => {
+const initialState: State = {
+  mounted: false,
+  data: defaultDataState,
+  ...defaultFetchState,
+}
+
+const reducer = (state: State, action: Action): State => {
   switch (action.type) {
+    case 'set-mounted':
+      return { ...state, mounted: action.mounted }
     case 'fetching':
-      return { ...state, fetching: true }
+      return {
+        ...state,
+        ...defaultFetchState,
+        data: state.data,
+        fetching: true,
+      }
     case 'fetched':
       return {
         ...state,
-        fetching: false,
+        ...defaultFetchState,
         fetched: true,
         data: {
           codes: action.results.codes,
@@ -63,26 +46,101 @@ const reducer = (state, action) => {
     case 'fetch-failed':
       return {
         ...state,
-        fetching: false,
-        fetched: false,
+        ...defaultFetchState,
+        data: state.data,
         fetchError: action.error,
       }
     case 'no-results':
-      return { ...state, fetching: false }
+      return { ...state, ...defaultFetchState, ...defaultDataState }
     default:
       return state
   }
 }
 
+const search: (keyword: string) => Promise<any> = makeFetchICD10Request()
+
 const useICD10 = () => {
   const [state, dispatch] = useReducer(reducer, initialState)
 
-  const stringify = (results: any) => (code: string) =>
-    results[code] ? `${code}: ${results[code].toUpperCase()}` : ''
+  const onSearch = (keyword: string) => {
+    if (keyword) {
+      dispatch({ type: 'fetching' })
+      search(keyword)
+        .then((response: { data: ResponseData }) => {
+          const parsedResults = parseResponse(response.data)
+          if (parsedResults) {
+            const { codes } = parsedResults
+            if (codes && !codes.length) {
+              return dispatch({ type: 'no-results' })
+            }
+            if (state.mounted) {
+              dispatch({ type: 'fetched', results: parsedResults })
+            }
+          } else {
+            dispatch({ type: 'no-results' })
+          }
+        })
+        .catch((error) => {
+          if (state.mounted && !axios.isCancel(error)) {
+            dispatch({ type: 'fetch-failed', error })
+          }
+        })
+    }
+  }
+
+  // Used to prevent review notes from opening when pressing enter
+  const onChange = (e: React.SyntheticEvent) => {
+    const { value } = e.target as typeof e.target & {
+      value: string
+    }
+    if (value) onSearch(value)
+  }
+
+  // const stringify = (results) => (code: string) =>
+  //   results[code] ? `${code}: ${results[code].toUpperCase()}` : ''
+
+  useEffect(() => {
+    dispatch({ type: 'set-mounted', mounted: true })
+    return () => {
+      dispatch({ type: 'set-mounted', mounted: false })
+    }
+  }, [])
 
   return {
     ...state,
+    onSearch,
+    onChange,
   }
 }
 
 export default useICD10
+
+/*
+
+  // This function will attempt to remove empty fields when adding new fields
+  // It will also add an empty field when the user selects an item
+  const onSelect = (selectedItem, downshift) => {
+    let description
+    const code = selectedItem
+    if (code) {
+      forEachField((field, index) => {
+        const codeElem = document.querySelector(
+          `input[name="diagnosis[${index}].code"]`,
+        )
+        const descriptionElem = document.querySelector(
+          `input[name="diagnosis[${index}].description"]`,
+        )
+        if (codeElem && descriptionElem) {
+          const _code = codeElem.value
+          const _description = descriptionElem.value
+          if (!_code && !_description) removeField(index)
+        } else removeField(index)
+      })
+      description = state.data.results[code] || ''
+      description = description.toUpperCase()
+      pushField({ code, description, comment: '' })
+      pushField({ code: '', description: '', comment: '' })
+      downshift.clearSelection()
+    }
+  }
+*/

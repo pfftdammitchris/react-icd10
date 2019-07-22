@@ -17,4 +17,4 @@ declare module '*.svg' {
   export { svgComponent as ReactComponent }
 }
 
-export type CodeDescription = [string, string]
+declare module '*'
