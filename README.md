@@ -1,4 +1,4 @@
-# react-icd10 (pending release)
+# react-icd10
 
 > Search the International Classification of Diseases table for classifying diagnoses and reasons for visits in health care
 
