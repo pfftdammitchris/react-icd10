@@ -3,9 +3,10 @@ import useICD10 from './useICD10'
 import './styles.css'
 
 export interface ReactICD10Props {
-  render: (args: any) => any
+  render: (args: any) => React.ReactNode
 }
 
-const ReactICD10: React.FC<ReactICD10Props> = ({ render }) => render(useICD10())
+const ReactICD10 = ({ render, ...rest }: ReactICD10Props) =>
+  render(useICD10(rest))
 
 export default ReactICD10
