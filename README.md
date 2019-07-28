@@ -138,7 +138,7 @@ export default App
 
 ### Methods
 
-#### `onSearch`: (keyword: string) => Promise<void>`
+#### `onSearch`: (keyword: string) => Promise<void>
 
 `onSearch` will use your keyword to query for diagnoses. After the call has finished, `data` will be provided as arguments to the render prop. The data is an object that with this shape:
 
