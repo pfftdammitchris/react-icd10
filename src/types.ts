@@ -4,11 +4,16 @@ export type Action =
   | { type: 'fetched'; results: StateData }
   | { type: 'fetch-failed'; error: any }
   | { type: 'no-results' }
+  | { type: 'reset' }
+
+export type FetchParams = {
+  limit?: number
+  fields?: string | string[]
+}
 
 export type ResponseData = [number, string[], any, any]
 
 export interface State {
-  mounted: boolean
   fetching: boolean
   fetched: boolean
   fetchError: any | null
@@ -26,3 +31,5 @@ export interface ICD10Object {
   description?: string
   comment?: string
 }
+
+export type UseICD10Args = FetchParams

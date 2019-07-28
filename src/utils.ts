@@ -1,39 +1,45 @@
 import axios from '../node_modules/axios/dist/axios'
-import { ResponseData } from './types'
+import { FetchParams, ResponseData } from './types'
 
-// export const filterer = (
-//   codes: string[],
-//   results: { [code: string]: string },
-//   inputValue = '',
-// ) => (acc: string[] = [], code: string) => {
-//   let shouldShow = false
-//   const diagnosisResult = results[code] || ''
-//   const hasInvalidChars = /^.*?(?=[\+\^#%&$\*:<>\?/\{\|\}\[\]\\\)\(]).*$/g.test(
-//     inputValue,
-//   )
-//   if (hasInvalidChars) return acc
-//   if (!inputValue) {
-//     shouldShow = true
-//   } else if (new RegExp(inputValue, 'i').test(diagnosisResult)) {
-//     shouldShow = true
-//   } else if (new RegExp(inputValue, 'i').test(code)) {
-//     shouldShow = true
-//   }
-//   if (shouldShow) acc.push(code)
-//   return acc
-// }
+const url = 'https://clinicaltables.nlm.nih.gov/api/icd10cm/v3/search'
+
+export const isFunction = (v: any): boolean => typeof v === 'function'
+export const isString = (v: any): boolean => typeof v === 'string'
+export const isArray = (v: any): boolean => Array.isArray(v)
+
+export const getSearchFields = (params: FetchParams): string => {
+  const defaultFields = 'code,name'
+  if (!params) return defaultFields
+  if (!params.fields) return defaultFields
+  if (params.fields) {
+    if (typeof params.fields === 'string') return params.fields
+    if (Array.isArray(params.fields)) return params.fields.join()
+  }
+  return defaultFields
+}
 
 // Supports cancelation of the previous onSearch request if a new onSearch is immediately invoked right after
-export const makeFetchICD10Request = () => {
+export const makeFetchICD10Request = (params: FetchParams = {}) => {
   let call: any
-  return async (keyword: string): Promise<any> => {
+  const { limit = 7 } = params
+  const queryParams: {
+    maxList: number
+    sf: string
+    terms: string
+    q?: string
+  } = {
+    maxList: limit,
+    sf: getSearchFields(params),
+    terms: '',
+  }
+  return async (keyword: string, include?: string): Promise<any> => {
     try {
       if (call) call.cancel()
       call = axios.CancelToken.source()
-      return axios.get(
-        `https://clinicaltables.nlm.nih.gov/api/icd10cm/v3/search?sf=code,name&terms=${keyword}`,
-        { cancelToken: call.token },
-      )
+      queryParams.terms = keyword
+      if (include) queryParams.q = include
+      const options = { cancelToken: call.token, params: queryParams }
+      return axios.get(url, options)
     } catch (error) {
       throw error
     }

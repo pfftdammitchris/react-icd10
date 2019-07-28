@@ -1,24 +1,26 @@
 import React from 'react'
-import ReactICD10 from 'react-icd10'
+import { useICD10 } from 'react-icd10'
 
 const App = () => {
+  const { onSearch, ...rest } = useICD10({ limit: 7 })
+
+  const onChange = (e) => {
+    onSearch(e.target.value)
+  }
+
   return (
     <div className='container'>
       <div className='content'>
-        <ReactICD10
-          render={({ onChange, fetching, fetched, fetchError, data }) => (
-            <div className='container'>
-              <input
-                onChange={onChange}
-                type='text'
-                placeholder='Search diagnosis'
-              />
-              <pre>
-                <code>{JSON.stringify(data, null, 2)}</code>
-              </pre>
-            </div>
-          )}
-        />
+        <pre>
+          <code>{JSON.stringify(rest, null, 2)}</code>
+        </pre>
+        <div>
+          <input
+            onChange={onChange}
+            type='text'
+            placeholder='Search diagnosis'
+          />
+        </div>
       </div>
     </div>
   )
