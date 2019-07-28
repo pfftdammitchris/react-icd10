@@ -1,6 +1,6 @@
 {
   "name": "react-icd10",
-  "version": "1.0.6",
+  "version": "1.0.7",
   "description": "Search the International Classification of Diseases table for classifying diagnoses for use in health care",
   "author": "pfftdammitchris",
   "license": "MIT",
