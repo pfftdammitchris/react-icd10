@@ -162,7 +162,7 @@ For those who would like to see it from a visual perspective:
 
 If an error occurred while fetching for the results, `fetchError` will be returned as an `Error` object as part of the render props.
 
-`onSearch` is also optimized internally to avoid duplicate requests, so you can assure that users who are constantly typing for results will prevent a mass amount of requests in between.
+`onSearch` is also optimized internally to avoid duplicate requests, so you can assure that users who are constantly typing for results won't be making mass amounts of requests in between.
 
 #### `reset`: () => void
 
