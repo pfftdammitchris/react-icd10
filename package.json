@@ -56,7 +56,7 @@
     "dist"
   ],
   "license": "MIT",
-  "main": "dist/index.js",
+  "main": "dist/index.es.js",
   "name": "react-icd10",
   "peerDependencies": {
     "react": "^17.0.2",
