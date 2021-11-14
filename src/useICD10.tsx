@@ -1,5 +1,5 @@
-import { useEffect, useReducer, useState } from 'react'
-import axios from '../node_modules/axios/dist/axios'
+import React from 'react'
+import axios from 'axios'
 import { Action, ResponseData, State, UseICD10Args } from './types'
 import { makeFetchICD10Request, parseResponse } from './utils'
 
@@ -57,41 +57,39 @@ const reducer = (state: State, action: Action): State => {
 }
 
 const useICD10 = (params: UseICD10Args) => {
-  const [mounted, setMounted] = useState(false)
-  const [state, dispatch] = useReducer(reducer, initialState)
+  const [mounted, setMounted] = React.useState(false)
+  const [state, dispatch] = React.useReducer(reducer, initialState)
 
-  const search: (keyword: string) => Promise<any> = makeFetchICD10Request(
-    params,
+  const reset = React.useCallback(() => dispatch({ type: 'reset' }), [])
+  const search = React.useMemo(() => makeFetchICD10Request(params), [params])
+
+  const onSearch = React.useCallback(
+    (keyword: string) => {
+      if (keyword) {
+        if (!state.fetching) dispatch({ type: 'fetching' })
+        search(keyword)
+          .then((response: { data: ResponseData }) => {
+            const parsedResults = parseResponse(response.data)
+            if (parsedResults) {
+              // if (codes && !codes.length) return dispatch({ type: 'no-results' })
+              if (mounted) dispatch({ type: 'fetched', results: parsedResults })
+            } else dispatch({ type: 'no-results' })
+          })
+          .catch((error) => {
+            console.error(error)
+            if (mounted && !axios.isCancel(error)) {
+              dispatch({ type: 'fetch-failed', error })
+            }
+          })
+      }
+    },
+    [state.fetching, search],
   )
-
-  const onSearch = (keyword: string) => {
-    if (keyword) {
-      if (!state.fetching) dispatch({ type: 'fetching' })
-      search(keyword)
-        .then((response: { data: ResponseData }) => {
-          const parsedResults = parseResponse(response.data)
-          if (parsedResults) {
-            // if (codes && !codes.length) return dispatch({ type: 'no-results' })
-            if (mounted) dispatch({ type: 'fetched', results: parsedResults })
-          } else dispatch({ type: 'no-results' })
-        })
-        .catch((error) => {
-          console.error(error)
-          if (mounted && !axios.isCancel(error)) {
-            dispatch({ type: 'fetch-failed', error })
-          }
-        })
-    }
-  }
-
-  const reset = () => {
-    dispatch({ type: 'reset' })
-  }
 
   // const stringify = (results) => (code: string) =>
   //   results[code] ? `${code}: ${results[code].toUpperCase()}` : ''
 
-  useEffect(() => {
+  React.useEffect(() => {
     setMounted(true)
     return () => setMounted(false)
   }, [])
