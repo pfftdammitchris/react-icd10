@@ -1,55 +1,94 @@
 {
-  "name": "react-icd10",
-  "version": "1.0.7",
-  "description": "Search the International Classification of Diseases table for classifying diagnoses for use in health care",
   "author": "pfftdammitchris",
-  "license": "MIT",
-  "repository": "pfftdammitchris/react-icd10",
-  "main": "dist/index.js",
-  "module": "dist/index.es.js",
-  "jsnext:main": "dist/index.es.js",
-  "engines": {
-    "node": ">=8",
-    "npm": ">=5"
-  },
-  "scripts": {
-    "test": "cross-env CI=1 react-scripts-ts test --env=jsdom",
-    "test:watch": "react-scripts-ts test --env=jsdom",
-    "build": "rollup -c",
-    "start": "rollup -c -w",
-    "prepare": "npm run build",
-    "predeploy": "cd example && npm install && npm run build",
-    "deploy": "gh-pages -d example/build"
-  },
   "dependencies": {
-    "axios": "^0.18.1"
+    "axios": "^0.24.0"
   },
-  "peerDependencies": {
-    "react": "^15.0.0 || ^16.0.0",
-    "react-dom": "^15.0.0 || ^16.0.0"
-  },
+  "description": "Search the International Classification of Diseases table for classifying diagnoses for use in health care",
   "devDependencies": {
+    "@babel/core": "^7.16.0",
+    "@babel/plugin-transform-runtime": "^7.16.0",
+    "@babel/preset-env": "^7.16.0",
+    "@rollup/plugin-babel": "^5.3.0",
+    "@rollup/plugin-commonjs": "^21.0.1",
+    "@rollup/plugin-node-resolve": "^13.0.6",
     "@svgr/rollup": "^2.4.1",
-    "@types/react": "^16.3.13",
-    "@types/react-dom": "^16.0.5",
+    "@types/react": "^17.0.34",
+    "@types/react-dom": "^17.0.11",
     "babel-core": "^6.26.3",
     "babel-runtime": "^6.26.0",
+    "concurrently": "^6.4.0",
     "cross-env": "^5.1.4",
     "gh-pages": "^1.2.0",
-    "react": "^16.4.1",
-    "react-dom": "^16.4.1",
+    "react": "17.0.2",
+    "react-dom": "17.0.2",
     "react-scripts-ts": "^2.16.0",
-    "rollup": "^0.62.0",
-    "rollup-plugin-babel": "^3.0.7",
-    "rollup-plugin-commonjs": "^9.1.3",
-    "rollup-plugin-node-resolve": "^3.3.0",
+    "rollup": "^2.60.0",
+    "rollup-plugin-esbuild": "^4.6.0",
+    "rollup-plugin-filesize": "^9.1.1",
+    "rollup-plugin-json": "^4.0.0",
     "rollup-plugin-peer-deps-external": "^2.2.0",
     "rollup-plugin-postcss": "^1.6.2",
-    "rollup-plugin-typescript2": "^0.17.0",
+    "rollup-plugin-progress": "^1.1.2",
     "rollup-plugin-url": "^1.4.0",
-    "typescript": "^3.6.0-dev.20190720"
+    "typescript": "^4.4.4"
+  },
+  "engines": {
+    "node": ">=14",
+    "npm": ">=6"
+  },
+  "eslintConfig": {
+    "env": {
+      "es6": true,
+      "node": true
+    },
+    "parserOptions": {
+      "ecmaVersion": 2021,
+      "sourceType": "module"
+    },
+    "root": true
+  },
+  "exports": {
+    "default": "./dist/index.es.js",
+    "import": "./dist/index.es.js",
+    "require": "./dist/index.cjs.js"
   },
   "files": [
     "dist"
-  ]
+  ],
+  "license": "MIT",
+  "main": "dist/index.js",
+  "name": "react-icd10",
+  "peerDependencies": {
+    "react": "^17.0.2",
+    "react-dom": "^17.0.2"
+  },
+  "prettier": {
+    "arrowParens": "always",
+    "printWidth": 80,
+    "semi": false,
+    "singleQuote": true,
+    "tabWidth": 2,
+    "trailingComma": "all"
+  },
+  "repository": "pfftdammitchris/react-icd10",
+  "scripts": {
+    "build": "cross-env NODE_ENV=production concurrently \"rollup -c\" \"npm run types\"",
+    "deploy": "gh-pages -d example/build",
+    "predeploy": "cd example && npm install && npm run build",
+    "prepare": "npm run build",
+    "start": "cross-env NODE_ENV=development concurrently \"rollup -c -w\" \"npm run types\"",
+    "test": "cross-env CI=1 react-scripts-ts test --env=jsdom",
+    "test:watch": "react-scripts-ts test --env=jsdom",
+    "types": "tsc --declaration --emitDeclarationOnly --outFile dist/index.d.ts"
+  },
+  "type": "module",
+  "typesVersions": {
+    "*": {
+      "index.d.ts": [
+        "./dist/index.d.ts"
+      ]
+    }
+  },
+  "typings": "./dist/index.d.ts",
+  "version": "1.0.8"
 }
